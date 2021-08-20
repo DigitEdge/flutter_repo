@@ -3,38 +3,8 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_wechat_app/pages/discover/discover_child_page.dart';
 import 'package:flutter_wechat_app/pages/friends/const.dart';
+import 'package:flutter_wechat_app/pages/friends/index_bar.dart';
 import 'friends_data.dart';
-
-const INDEX_WORDS = [
-  '🔍',
-  '☆',
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
-  'R',
-  'S',
-  'T',
-  'U',
-  'V',
-  'W',
-  'X',
-  'Y',
-  'Z'
-];
 
 class FriendsPage extends StatefulWidget {
   @override
@@ -89,15 +59,6 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> words = [];
-    for (int i = 0; i < INDEX_WORDS.length; i++) {
-      words.add(Expanded(
-          child: Text(
-        INDEX_WORDS[i],
-        style: TextStyle(fontSize: 10),
-      ))); //填充布局
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: WechatThemeColor,
@@ -130,17 +91,7 @@ class _FriendsPageState extends State<FriendsPage> {
             ),
           ),
           // 悬浮检索控件
-          Positioned(
-            right: 0.0,
-            height: ScreenHeight(context) / 2,
-            top: ScreenHeight(context) / 8,
-            width: 30,
-            child: Container(
-              child: Column(
-                children: words,
-              ),
-            ),
-          )
+          IndexBar(),
         ],
       ),
     );
