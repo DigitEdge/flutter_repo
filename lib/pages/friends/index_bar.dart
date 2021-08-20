@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
-
 import 'const.dart';
 
+typedef IndexBarCallback = void Function(String str);
+
 class IndexBar extends StatefulWidget {
+  // IndexBarCallback可以简写为下面的形式
+  // final void Function(String str)? indexBarCallback;
+  final IndexBarCallback? indexBarCallback;
+  const IndexBar({Key? key, this.indexBarCallback}) : super(key: key);
+
   @override
   _IndexBarState createState() => _IndexBarState();
 }
 
+String getIndex(BuildContext context, Offset globalPosition) {
+// 坐标转换
+  RenderBox box = context.findRenderObject() as RenderBox;
+  // 算出 y值
+  double y = box.globalToLocal(globalPosition).dy;
+  var itemHieght = ScreenHeight(context) / 2 / INDEX_WORDS.length;
+  // ~/ dart 中的相除取整. clamp 保证数组不会越界
+  int index = (y ~/ itemHieght).clamp(0, INDEX_WORDS.length - 1);
+  return INDEX_WORDS[index];
+}
+
+// 带有_的都是内部的，外部不能访问
 class _IndexBarState extends State<IndexBar> {
   Color _bgColor = Color.fromRGBO(1, 1, 1, 0.0);
   Color _textColor = Colors.black;
@@ -28,9 +46,20 @@ class _IndexBarState extends State<IndexBar> {
         top: ScreenHeight(context) / 8,
         width: 30,
         child: GestureDetector(
+          //监听手势区域
+          onVerticalDragUpdate: (DragUpdateDetails details) {
+            if (widget.indexBarCallback != null) {
+              widget
+                  .indexBarCallback!(getIndex(context, details.globalPosition));
+            }
+          },
           onVerticalDragDown: (DragDownDetails details) {
             _bgColor = Color.fromRGBO(1, 1, 1, 0.3);
             _textColor = Colors.white;
+            if (widget.indexBarCallback != null) {
+              widget
+                  .indexBarCallback!(getIndex(context, details.globalPosition));
+            }
             setState(() {});
           },
           onVerticalDragEnd: (DragEndDetails details) {

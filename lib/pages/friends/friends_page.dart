@@ -12,18 +12,42 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
+  ScrollController _scrollController = ScrollController();
   final List<Friends> _listDatas = [];
+  // 字典，存储对应 indexLetter 的位置
+  final Map _groupOffsetMap = {
+    INDEX_WORDS[0]: 0.0,
+    INDEX_WORDS[1]: 0.0,
+  };
 
   @override
   void initState() {
     //重写初始化方法
     super.initState();
-    //添加更多数据，语法糖.相当于 OC 的 addObjectFromArray，这里是添加了两次
+    // 处理联系人列表数据
+    //添加更多数据，链式编程语法糖.相当于 OC 的 addObjectFromArray，这里是添加了两次
     _listDatas..addAll(datas)..addAll(datas);
 //  排序
     _listDatas.sort((Friends a, Friends b) {
       return a.indexLetter!.compareTo(b.indexLetter!);
     });
+
+    double _groupOffset = 54.0 * 4;
+    for (var i = 0; i < _listDatas.length; i++) {
+      if (i < 1) {
+        //第一个一定是头部
+        _groupOffsetMap.addAll({_listDatas[i].indexLetter: _groupOffset});
+        _groupOffset += 84.0;
+      } else if (_listDatas[i].indexLetter == _listDatas[i - 1].indexLetter) {
+        //判断有没有头
+        _groupOffsetMap.addAll({_listDatas[i].indexLetter: _groupOffset});
+        _groupOffset += 54.0;
+      } else {
+        //剩下的都是有头部的
+        _groupOffsetMap.addAll({_listDatas[i].indexLetter: _groupOffset});
+        _groupOffset += 84.0;
+      }
+    }
   }
 
   final List<Friends> _headerData = [
@@ -85,13 +109,25 @@ class _FriendsPageState extends State<FriendsPage> {
         children: [
           // 通讯录列表
           Container(
+            // ListView.builder 相当于 tableViewCell 的重用
             child: ListView.builder(
+              controller: _scrollController, //相当于设置scrollView代理
               itemCount: _listDatas.length + _headerData.length,
               itemBuilder: _itemForRow,
             ),
           ),
           // 悬浮检索控件
-          IndexBar(),
+          IndexBar(
+            indexBarCallback: (String str) {
+              if (_groupOffsetMap[str] != null) {
+                _scrollController.animateTo(
+                  _groupOffsetMap[str],
+                  duration: Duration(milliseconds: 100),
+                  curve: Curves.easeIn,
+                );
+              }
+            },
+          ),
         ],
       ),
     );
