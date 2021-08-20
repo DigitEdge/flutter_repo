@@ -71,6 +71,11 @@ flutter:
     - images/微信设置.png
     - images/微信相册.png
     - images/Hank.png
+    - images/icon_friends_add.png
+    - images/新的朋友.png
+    - images/群聊.png
+    - images/标签.png
+    - images/公众号.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

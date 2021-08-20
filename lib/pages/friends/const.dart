@@ -1,0 +1,6 @@
+import 'package:flutter/material.dart';
+
+// 主题色
+final Color WechatThemeColor = Color.fromRGBO(220, 220, 220, 1.0);
+// 屏幕宽度
+double ScreenWidth(BuildContext context) => MediaQuery.of(context).size.width;

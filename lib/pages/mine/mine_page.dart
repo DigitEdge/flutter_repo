@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wechat_app/pages/discover/discover_cell.dart';
+import 'package:flutter_wechat_app/pages/friends/const.dart';
 
 class MinePage extends StatefulWidget {
   const MinePage({Key? key}) : super(key: key);
@@ -84,7 +85,7 @@ class _MinePageState extends State<MinePage> {
         child: Stack(
           children: [
             Container(
-                color: Color.fromRGBO(220, 220, 220, 1.0),
+                color: WechatThemeColor,
                 child: MediaQuery.removePadding(
                   //移除刘海屏手机的顶部安全区，flutter 内部处理的
                   removeTop: true,
