@@ -11,6 +11,9 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  List<Chat> _datas = [];
+  bool _cancelConnect = false;
+
   @override
   void initState() {
     super.initState();
@@ -25,11 +28,26 @@ class _ChatPageState extends State<ChatPage> {
     // final newChat = json.decode(chatJson);
     // print(newChat is Map);
 
-    getDatas().then((value) {
-      print(datas);
-    }).catchError(
-      print('object');
-    );
+    getDatas()
+        .then((List<Chat> datas) {
+          if (!_cancelConnect) {
+            setState(() {
+              _datas = datas;
+            });
+          }
+        })
+        .catchError((e) {
+          _cancelConnect = true;
+          print(e);
+        })
+        .whenComplete(() {
+          print('数据处理完毕');
+        })
+        .timeout(Duration(seconds: 10))
+        .catchError((timeOut) {
+          _cancelConnect = true;
+          print('请求超时${timeOut}');
+        });
   }
 
   @override
@@ -52,13 +70,58 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       body: Container(
-        child: ListView.builder(
-          itemCount: 10,
-          itemBuilder: (BuildContext context, int index) {
-            return Text('data');
-          },
-        ),
+        child: _datas.length == 0
+            ? Center(
+                child: Text('Loading...'),
+              )
+            : ListView.builder(
+                itemCount: _datas.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(_datas[index].name),
+                    subtitle: Container(
+                      height: 20,
+                      width: 20,
+                      child: Text(
+                        _datas[index].message,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(_datas[index].imageUrl),
+                    ),
+                  );
+                },
+              ),
       ),
+
+      // 这种方式，每次进来页面都会请求一次
+      // FutureBuilder(
+      //   future: getDatas(),
+      //   builder: (BuildContext context, AsyncSnapshot snapShot) {
+      //     if (snapShot.connectionState == ConnectionState.waiting) {
+      //       return Center(
+      //         child: Text('Loading...'),
+      //       );
+      //     } else {
+      //       return ListView(
+      //         children: snapShot.data.map<Widget>((item) {
+      //           return ListTile(
+      //             title: Text(item.name),
+      //             subtitle: Container(
+      //               height: 20,
+      //               width: 20,
+      //               child: Text(item.message),
+      //             ),
+      //             leading: CircleAvatar(
+      //               backgroundImage: NetworkImage(item.imageUrl),
+      //             ),
+      //           );
+      //         }).toList(),
+      //       );
+      //     }
+      //   },
+      // ), //专门用来做异步渲染
     );
   }
 
