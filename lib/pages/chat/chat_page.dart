@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wechat_app/pages/chat/chat.dart';
 import 'package:flutter_wechat_app/pages/friends/const.dart';
-import 'package:flutter_wechat_app/pages/friends/friends_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+/* 混入（Mixin），类似于 OC 的 Category
+* 用来给类增加功能，使用 With 混入一个或多个 Mixin
+*/
 
 class ChatPage extends StatefulWidget {
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+//  混入AutomaticKeepAliveClientMixin，给_ChatPageState混入这个类，可以帮助保持状态
+class _ChatPageState extends State<ChatPage>
+    with AutomaticKeepAliveClientMixin<ChatPage> {
   List<Chat> _datas = [];
   bool _cancelConnect = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -52,6 +60,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); //保留状态需要调用父类方法
     return Scaffold(
       appBar: AppBar(
         title: Text("微信"),

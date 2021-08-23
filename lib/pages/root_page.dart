@@ -10,6 +10,9 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  final PageController _pageCtrl = PageController(
+    initialPage: 0,
+  );
   List<Widget> _pages = [ChatPage(), FriendsPage(), DiscoverPage(), MinePage()];
   int _currentPageIndex = 0;
   @override
@@ -20,6 +23,7 @@ class _RootPageState extends State<RootPage> {
           onTap: (int index) {
             _currentPageIndex = index;
             setState(() {});
+            _pageCtrl.jumpToPage(index);
           },
           type: BottomNavigationBarType.fixed,
           selectedFontSize: 12.0, //设置大小，去掉选中的放大效果
@@ -76,8 +80,24 @@ class _RootPageState extends State<RootPage> {
                 label: '我'),
           ],
         ),
-        body: _pages[_currentPageIndex],
+        body: PageView(
+          // 拖动与底部 item 联动
+          // onPageChanged: (int index) {
+          //   _currentPageIndex = index;
+          //   setState(() {});
+          // },
+
+          physics: NeverScrollableScrollPhysics(), //禁止拖动
+          controller: _pageCtrl, //使用page 处理，保证状态保留可以成功
+          children: _pages,
+        ),
+        // _pages[_currentPageIndex]
       ),
     );
   }
 }
+
+/*
+* 小部件树
+app -> rootPage -> c -> d
+**/ 

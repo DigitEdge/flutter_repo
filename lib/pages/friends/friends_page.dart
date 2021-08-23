@@ -11,7 +11,8 @@ class FriendsPage extends StatefulWidget {
   _FriendsPageState createState() => _FriendsPageState();
 }
 
-class _FriendsPageState extends State<FriendsPage> {
+class _FriendsPageState extends State<FriendsPage>
+    with AutomaticKeepAliveClientMixin<FriendsPage> {
   ScrollController _scrollController = ScrollController();
   final List<Friends> _listDatas = [];
   // 字典，存储对应 indexLetter 的位置
@@ -19,6 +20,9 @@ class _FriendsPageState extends State<FriendsPage> {
     INDEX_WORDS[0]: 0.0,
     INDEX_WORDS[1]: 0.0,
   };
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -83,6 +87,8 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: WechatThemeColor,
