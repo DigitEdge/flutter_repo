@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_wechat_app/pages/chat/chat.dart';
 import 'package:flutter_wechat_app/pages/friends/const.dart';
+import 'package:flutter_wechat_app/pages/friends/friends_data.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -7,6 +11,27 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  @override
+  void initState() {
+    super.initState();
+    // final chat = {
+    //   'name': '张三',
+    //   'name': '张三',
+    // };
+    // Map 转json
+    // final chatJson = json.encode(chat);
+    // print(chatJson);
+    // json 转 Map
+    // final newChat = json.decode(chatJson);
+    // print(newChat is Map);
+
+    getDatas().then((value) {
+      print(datas);
+    }).catchError(
+      print('object');
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +51,13 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
-      body: Center(
-        child: Text('微信页面'),
+      body: Container(
+        child: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (BuildContext context, int index) {
+            return Text('data');
+          },
+        ),
       ),
     );
   }
@@ -59,5 +89,24 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
     );
+  }
+
+//  Future<T>, 可能有值，也可能没有值
+  Future<List<Chat>> getDatas() async {
+    final response = await http.get(
+      Uri.parse('http://rap2api.taobao.org/app/mock/data/2056667'),
+    );
+    if (response.statusCode == 200) {
+// 获取响应数据，先转成 Map
+      final responseBody = json.decode(response.body);
+// 转换成 model
+      List<Chat> chartList = responseBody['chat_list'].map<Chat>((item) {
+        //遍历
+        return Chat.fromJson(item);
+      }).toList();
+      return chartList;
+    } else {
+      throw Exception('statusCode:${response.statusCode}');
+    }
   }
 }

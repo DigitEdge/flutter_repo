@@ -11,7 +11,7 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   List<Widget> _pages = [ChatPage(), FriendsPage(), DiscoverPage(), MinePage()];
-  int _currentPageIndex = 1;
+  int _currentPageIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Container(
